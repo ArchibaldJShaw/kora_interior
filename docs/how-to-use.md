@@ -19,9 +19,10 @@ local objects, poi = exports.kora_interior:createGeometry(
     vector4(1.5, -2.0, 0.0, 180.0)
 )
 if not objects then
-    return print('shell geometry failed:', poi) -- poi is the error string here
+    Kora.logging.error('interior.geometry_failed', 'Shell geometry failed', { error = tostring(poi) }) -- poi is the error string here
+    return
 end
-print('spawned entity', objects[1])
+Kora.logging.debug('interior.spawned', 'Shell spawned', { entity = objects[1] })
 ```
 
 - The entity is tracked against the calling resource (`GetInvokingResource()`), and is deleted automatically when that resource stops (see Behavior in the Shell geometry module).
@@ -39,10 +40,11 @@ local shell, err = exports.kora_interior:createShell(
     'shell_v16low'
 )
 if not shell then
-    return print('shell failed:', err)
+    Kora.logging.error('interior.shell_failed', 'Shell failed', { error = tostring(err) })
+    return
 end
 local objects, poi = shell[1], shell[2]
-print('house object', objects[1], 'exit heading', poi.exit.w)
+Kora.logging.debug('interior.house_object', 'House object spawned', { entity = objects[1], exitHeading = poi.exit.w })
 ```
 
 ## Using the 127 named shell factories (legacy exports)
@@ -56,7 +58,7 @@ local objects, poi = shell[1], shell[2]
 
 -- ... later, tear it down:
 exports['qb-interior']:DespawnInterior(objects, function()
-    print('interior despawned')
+    Kora.logging.debug('interior.despawned', 'Interior despawned')
 end)
 ```
 
